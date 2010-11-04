@@ -1,5 +1,0 @@
-// Run the function once, and only once
-var once = function(fn) {
-
-
-    function crc32(str, crc) {
