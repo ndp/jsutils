@@ -29,7 +29,7 @@ describe('once()', function() {
 
     it('should call a second time if declared differently', function() {
         Funk.once(function() {
-            x++
+            x += 1;
         });
         expect(x).toEqual(2);
     });
