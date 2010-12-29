@@ -1,14 +1,27 @@
-# Javascript Utilities
-
-Various utilities that don't (yet) warrant packaging on their own.
+Various javascript utilities that don't (yet) warrant packaging on their own.
 
 
-## Color Helpers
+## color_helpers.js
 
 Utilities to perform color math and manipulation. Extracted from Csster.
 
+*  <code>"#ab342c".darken(%)</code> -- make color darker by given percent
+*  <code>"#ab342c".lighten(%)</code> -- make color lighter by given percent
+*  <code>"#ab342c".saturate(%)</code>  -- make color more saturated by given percent. To *desaturate*, use negative values for the percent. Note that <code>"#ab342c".saturate(-100)</code> renders in grayscale.
 
-## Color Factory
+There are also color conversion routines if you want to build your own manipulation.
+
+*  <code>"blue".toHexColor()</code>
+*  <code>"#9cf".toHexColor()</code>
+*  <code>"#ab342c".toHexColor()</code> (no-op)
+*  <code>"#ab342c".toRGB()</code>  converts to array of three values, 0 - 255
+*  <code>"#ab342c".toHSL()</code>
+*  <code>Csster.hslToHexColor(h,s,l)</code> converts a triplet to a hex color
+
+Opacity is currently not supported by the color model.
+
+
+## color_factory.js
 
 Generate color schemes appropriate to prototypes, visualizations and maps.
 
@@ -35,13 +48,13 @@ Color scheme generation inspired by http://www.personal.psu.edu/cab38/ColorSch/S
 * <code>ColorFactory.diverging()</code> Diverging schemes put equal emphasis on mid-range critical values and extremes at both ends of the data range. The critical class or break in the middle of the legend is emphasized with light colors and low and high extremes are emphasized with dark colors that have contrasting hues.
 
 
-## Funks
+## funks.js
 
 "Functional" helpers that contemplate different programming paradigms.
 
 
 
-## Columnize (jQuery plugin)
+## jquery.columnize.js
 
 Provides column level event triggering for a table's columns. Events receive jQuery
 objects with all the cells of a single table row, so that hover and click behavior
