@@ -29,19 +29,10 @@ Generate color schemes appropriate to prototypes, visualizations and maps.
 Color scheme generation inspired by http://www.personal.psu.edu/cab38/ColorSch/Schemes.html
 
 
-* <code>ColorFactory.qualitative([refColor], count)</code> Qualitative schemes do not imply magnitude differences between legend classes,
-        and hues are used to create the primary visual differences between classes.
-        Qualitative schemes are best suited to representing nominal or categorical data.
-* <code>ColorFactory.sequential(startColor, [endColor], count)</code> Sequential
-    schemes are suited to ordered data that progress from low to high.
-        Lightness steps dominate the look of these schemes, with light colors
-        for low data values to dark colors for high data values.
+* <code>ColorFactory.qualitative([refColor], count)</code> Qualitative schemes do not imply magnitude differences between legend classes, and hues are used to create the primary visual differences between classes. Qualitative schemes are best suited to representing nominal or categorical data.
+* <code>ColorFactory.sequential(startColor, [endColor], count)</code> Sequential schemes are suited to ordered data that progress from low to high. Lightness steps dominate the look of these schemes, with light colors for low data values to dark colors for high data values.
 * <code>ColorFactory.binary(trueColor)</code> returns object with true => darker color, false=>lighter color.
-* <code>ColorFactory.diverging()</code> Diverging schemes put equal emphasis on mid-range critical values and
-        extremes at both ends of the data range.
-        The critical class or break in the middle of the legend is
-        emphasized with light colors and low and high extremes are
-        emphasized with dark colors that have contrasting hues.
+* <code>ColorFactory.diverging()</code> Diverging schemes put equal emphasis on mid-range critical values and extremes at both ends of the data range. The critical class or break in the middle of the legend is emphasized with light colors and low and high extremes are emphasized with dark colors that have contrasting hues.
 
 
 ## Funks
