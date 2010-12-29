@@ -56,6 +56,15 @@ Color scheme generation inspired by http://www.personal.psu.edu/cab38/ColorSch/S
 
 ## jquery.columnize.js
 
-Provides column level event triggering for a table's columns. Events receive jQuery
+Column level event triggering on a table. Handlers receive jQuery
 objects with all the cells of a single table row, so that hover and click behavior
-can be implemented on tables. 
+can be implemented on tables.
+<pre>
+         $('table').columnize().bind('columnmouseenter',function(e, $cells) {
+             $cells.addClass('hover');
+         }).bind('columnmouseleave',function(e, $cells) {
+             $cells.removeClass('hover');
+         });
+</pre>
+This is a primitive version of various other plugins,
+but generally all that is needed for most jobs.
