@@ -1,5 +1,10 @@
 Various javascript utilities that don't (yet) warrant packaging on their own.
 
+<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;">&nbsp;</div>
+<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;">&nbsp;</div>
+<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;">&nbsp;</div>
+
+
 
 ## color_helpers.js
 
@@ -31,8 +36,6 @@ Generate color schemes appropriate to prototypes, visualizations and maps.
 * <code>ColorFactory.random()</code> a random color, somewhat evenly distributed.
 * <code>ColorFactory.randomGray()</code> a random gray scale value.
 * <code>ColorFactory.randomHue()</code> given a saturation and lightness returns a random color.
-
-<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;"></div>
 
 ### Interpolation
 
