@@ -15,7 +15,7 @@ There are also color conversion routines if you want to build your own manipulat
 *  <code>"#9cf".toHexColor()</code>
 *  <code>"#ab342c".toHexColor()</code> (no-op)
 *  <code>"#ab342c".toRGB()</code>  converts to array of three values, 0 - 255
-*  <code>"#ab342c".toHSL()</code>
+*  <code>"#ab342c".toHSL()</code> returns an array of hue, saturation and lightness. Hue is a range from 0-360, while the others are from 0 to 100.
 *  <code>Csster.hslToHexColor(h,s,l)</code> converts a triplet to a hex color
 
 Opacity is currently not supported by the color model.
@@ -31,6 +31,8 @@ Generate color schemes appropriate to prototypes, visualizations and maps.
 * <code>ColorFactory.random()</code> a random color, somewhat evenly distributed.
 * <code>ColorFactory.randomGray()</code> a random gray scale value.
 * <code>ColorFactory.randomHue()</code> given a saturation and lightness returns a random color.
+
+<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;"></div>
 
 ### Interpolation
 
