@@ -1,40 +1,108 @@
 describe('ColorFactory', function() {
 
-    function render(colors) {
-        $('<div>').css({height:20,width:2,backgroundColor:'black','float':'left',clear: 'left'}).appendTo($('body'));
-        for (c in colors) {
-            $('<div>').css({height:20,width:20,backgroundColor:colors[c],'float':'left'}).appendTo($('body'));
+    function render(colorsOrCode, label) {
+        var colors = colorsOrCode;
+        if (typeof colorsOrCode == 'string') {
+            colors = eval(colorsOrCode)
         }
+        var $holder = $('<div>').css({position: 'relative', height:35,'float':'left',clear: 'left'}).appendTo($('body'));
+        var $swatches = $('<div>').css({width: 280}).appendTo($holder);
+        for (c in colors) {
+            $('<div>').css({marginLeft: -1,height:30,width:30,backgroundColor:colors[colors.length - c - 1],'float':'right',border:'1px solid #555'}).appendTo($swatches);
+        }
+        if (colors != colorsOrCode) {
+            $('<code>').css({position: 'absolute', left: 300, backgroundColor: '#f6f6f6',lineHeight: '15px', height:15,width:500,fontSize: 'small','float':'left'}).text(colorsOrCode).appendTo($holder);
+        }
+        $('<div>').css({position: 'absolute', left: 300, top: 15, height:15,width:200,fontSize: 'x-small','float':'left'}).text(label || '').appendTo($holder);
+
+        return colors;
     }
+
+
+    describe('primaryColors', function() {
+        it('should yellow, red, blue', function() {
+            var colors = render('ColorFactory.primaryColors()','primary colors');
+            expect(colors.length).toEqual(3);
+            expect(colors[0]).toBeVisuallyClose('yellow');
+            expect(colors[1]).toBeVisuallyClose('red');
+            expect(colors[2]).toBeVisuallyClose('blue');
+        });
+    });
+
+    describe('primaryAndSecondaryColors', function() {
+        it('should yellow, orange, red, purple, blue, green', function() {
+            var colors = render("ColorFactory.primaryAndSecondaryColors()",'primary colors');
+            expect(colors.length).toEqual(6);
+            expect(colors[0]).toBeVisuallyClose('yellow');
+            expect(colors[1]).toBeVisuallyClose('Orange');
+            expect(colors[2]).toBeVisuallyClose('red');
+            expect(colors[3]).toBeVisuallyClose('#90f');
+            expect(colors[4]).toBeVisuallyClose('blue');
+            expect(colors[5]).toBeVisuallyClose('#0f6');
+        });
+    });
+
+
+    describe('complementaryColors', function() {
+        it('should find complement to red', function() {
+            var colors = render("ColorFactory.complementary('#ff0000')",'complementary red');
+//            expect(color[0]).toBeVisuallyClose('#08d16b');
+            expect(colors[0]).toBeVisuallyClose('#00ffff');
+        });
+        it('should find complement to red', function() {
+            var colors = render("ColorFactory.complementary('#0338ff')",'complementary #0338ff');
+            expect(colors[0]).toBeVisuallyClose('#ff9d04');
+        });
+        it('should find complement to #9e01d6', function() {
+            var colors = render("ColorFactory.complementary('#9e01d6')",'complementary #9e01d6');
+            expect(colors[0]).toBeVisuallyClose('#3ad501');
+//            expect(colors[0]).toBeVisuallyClose('#97fe03');
+        });
+    });
+
+    describe('analogous', function() {
+        it('should produce analogous colors from example', function() {
+            var colors = render("ColorFactory.analogous('#96fe04')",'analogous');
+            expect(colors.length).toEqual(3);
+            expect(colors[1]).toBeVisuallyClose('#96fe04');
+            expect(colors[0]).toBeVisuallyClose('#08d16b');
+            expect(colors[2]).toBeVisuallyClose('#fef807');
+        });
+        it('should produce analogous colors from blue', function() {
+            var colors = render("ColorFactory.analogous('blue')",'analogous');
+            expect(colors.length).toEqual(3);
+            expect(colors[1]).toBeVisuallyClose('#0000ff');
+            expect(colors[0]).toBeVisuallyClose('#d006d0');
+            expect(colors[2]).toBeVisuallyClose('#007fff');
+        });
+    });
+
 
     describe('interpolate', function() {
         it('should do nothing is passed one color', function() {
-            var colors = ColorFactory.interpolate('#e6e6e6', '#e6e6e6', 2);
+            var colors = render("ColorFactory.interpolate('#e6e6e6', '#e6e6e6', 2)",'interpolate');
             expect(colors.length).toEqual(2);
             expect(colors[0]).toBeVisuallyClose('#e6e6e6');
             expect(colors[1]).toBeVisuallyClose('#e6e6e6');
-            render(colors);
         });
 
         it('should do nothing is passed two colors', function() {
-            var colors = ColorFactory.interpolate('#e6e6e6', '#bbbbbb', 2);
+            var colors = render("ColorFactory.interpolate('#e6e6e6', '#bbbbbb', 2)",'interpolate between 2 colors');
             expect(colors.length).toEqual(2);
             expect(colors[0]).toBeVisuallyClose('#e6e6e6');
             expect(colors[1]).toBeVisuallyClose('#bbbbbb');
-            render(colors);
         });
 
         it('should find medium gray', function() {
-            var colors = ColorFactory.interpolate('#000000', '#ffffff', 3);
+            var colors = render("ColorFactory.interpolate('#000000', '#ffffff', 3)",'interpolate medium gray');
             expect(colors.length).toEqual(3);
             expect(colors[0]).toBeVisuallyClose('#000000');
             expect(colors[1]).toBeVisuallyClose('#999999');
             expect(colors[2]).toBeVisuallyClose('#ffffff');
-            render(colors);
         });
 
         it('should find many grays', function() {
-            var colors = ColorFactory.interpolate('#000000', '#ffffff', 6);
+            var colors = render("ColorFactory.interpolate('#000000', '#ffffff', 6)",'interpolate many grays');
             expect(colors.length).toEqual(6);
             expect(colors[0]).toBeVisuallyClose('#000000');
             expect(colors[1]).toBeVisuallyClose('#333333');
@@ -42,22 +110,18 @@ describe('ColorFactory', function() {
             expect(colors[3]).toBeVisuallyClose('#999999');
             expect(colors[4]).toBeVisuallyClose('#cccccc');
             expect(colors[5]).toBeVisuallyClose('#ffffff');
-            render(colors);
         });
         it('should interpolate hues', function() {
-            var colors = ColorFactory.interpolate('red', 'blue', 3);
+            var colors = render("ColorFactory.interpolate('red', 'blue', 3)",'interpolate hues');
             expect(colors[1]).toBeVisuallyClose('#00ff00');
-            render(colors);
         });
         it('should interpolate saturation', function() {
-            var colors = ColorFactory.interpolate('#ff0000', '#996666', 3);
+            var colors = render("ColorFactory.interpolate('#ff0000', '#996666', 3)",'interpolate saturation');
             expect(colors[1]).toBeVisuallyClose('#cc3333');
-            render(colors);
         });
         it('should interpolate lightness', function() {
-            var colors = ColorFactory.interpolate('#ff0000', '#ffffff', 5);
+            var colors = render("ColorFactory.interpolate('#ff0000', '#ffffff', 5)",'interpolate lightness');
             expect(colors[2]).toBeVisuallyClose('#df9f9f');
-            render(colors);
         });
 
     });
@@ -65,109 +129,95 @@ describe('ColorFactory', function() {
 
     describe('qualitative()', function() {
         it('should reproduce example', function() {
-            var colors = ColorFactory.qualitative('#80b696', 3);
+            var colors = render("ColorFactory.qualitative('#80b696', 3)",'qualitative example');
             expect(colors).toBeDistinguishable();
 //            expect(colors[0]).toBeVisuallyClose('#80b696');
 //            expect(colors[1]).toBeVisuallyClose('#84a0c0');
 //            expect(colors[2]).toBeVisuallyClose('#de68a6');
             //expect(colors).toEqual('#80b696', '#84a0c0', '#de68a6')
-            render(colors);
         });
         it('should return 5 saturated colors when asked', function() {
-            var colors = ColorFactory.qualitative('red', 5);
+            var colors = render("ColorFactory.qualitative('red', 5)",'qualitative 5 saturated colors');
             expect(colors).toBeDistinguishable();
-            render(colors);
         });
         it('should be able to start from white', function() {
-            var colors = ColorFactory.qualitative('white', 5);
+            var colors = render("ColorFactory.qualitative('white', 5)",'qualitative from white');
             expect(colors).toBeDistinguishable();
-            render(colors);
         });
         it('should be able to start from black', function() {
-            var colors = ColorFactory.qualitative('black', 4);
+            var colors = render("ColorFactory.qualitative('black', 4)",'qualitative from black');
             expect(colors).toBeDistinguishable();
-            render(colors);
         });
         it('should be able to start with no color', function() {
-            var colors = ColorFactory.qualitative(6);
+            var colors = render("ColorFactory.qualitative(6)",'qualitative from no color');
             expect(colors).toBeDistinguishable();
-            render(colors);
         });
         it('should return 9 colors when asked', function() {
-            var colors = ColorFactory.qualitative('red'.saturate(-20).lighten(20), 9);
+            var colors = render("ColorFactory.qualitative('red'.saturate(-20).lighten(20), 9)",'qualitative 9 colors');
             expect(colors).toBeDistinguishable();
             expect(colors.length).toEqual(9);
-            render(colors);
         });
     });
 
     describe('sequential', function() {
         it('should reproduce example gray', function() {
-            var colors = ColorFactory.sequential('#e6e6e6', 4);
+            var colors = render("ColorFactory.sequential('#e6e6e6', 4)",'sequential #e9e9e9');
             expect(colors.length).toEqual(4);
             expect(colors[0]).toBeVisuallyClose('#e6e6e6');
             expect(colors[1]).toBeVisuallyClose('#b3b3b3');
             expect(colors[2]).toBeVisuallyClose('#5d5d5d');
             expect(colors[3]).toBeVisuallyClose('#202020');
-            render(colors);
         });
 
         it('should reproduce example purple', function() {
-            var colors = ColorFactory.sequential('#c4b3d8', '#240d5e', 3);
+            var colors = render("ColorFactory.sequential('#c4b3d8', '#240d5e', 3)",'sequential purple example');
             expect(colors.length).toEqual(3);
             expect(colors[0]).toBeVisuallyClose('#c4b3d8');
             expect(colors[1]).toBeVisuallyClose('#7c67ab', 25);
             expect(colors[2]).toBeVisuallyClose('#240d5e');
-            render(colors);
         });
 
         it('should work from dark purple lighter', function() {
-            var colors = ColorFactory.sequential('#240d5e', 4);
+            var colors = render("ColorFactory.sequential('#240d5e', 7)",'sequential dark purple');
             expect(colors[0]).toBeVisuallyClose('#240d5e');
-            expect(colors[1]).toBeVisuallyClose('#4519b5');
-            expect(colors[2]).toBeVisuallyClose('#764ae6');
-            expect(colors[3]).toBeVisuallyClose('#b8a1f2');
-            render(colors);
+            expect(colors[2]).toBeVisuallyClose('#4519b5');
+            expect(colors[4]).toBeVisuallyClose('#764ae6');
+            expect(colors[6]).toBeVisuallyClose('#b8a1f2');
         });
 
         it('should work from light purple darker', function() {
-            var colors = ColorFactory.sequential('#c4b3d8', 4);
+            var colors = render("ColorFactory.sequential('#c4b3d8', 7)",'sequential light purple');
             expect(colors[0]).toBeVisuallyClose('#c4b3d8');
-            expect(colors[1]).toBeVisuallyClose('#7c67ab');
-            expect(colors[2]).toBeVisuallyClose('#66478a');
-            expect(colors[3]).toBeVisuallyClose('#39284d');
-            render(colors);
+            expect(colors[2]).toBeVisuallyClose('#7c67ab');
+            expect(colors[4]).toBeVisuallyClose('#66478a');
+            expect(colors[6]).toBeVisuallyClose('#39284d');
         });
 
         it('should reproduce example orange', function() {
-            var colors = ColorFactory.sequential('#ffcc80', '#b30000', 3);
+            var colors = render("ColorFactory.sequential('#ffcc80', '#b30000', 3)",'sequential orange example');
             expect(colors.length).toEqual(3);
             expect(colors[0]).toBeVisuallyClose('#ffcc80');
             expect(colors[1]).toBeVisuallyClose('#f35926');
             expect(colors[2]).toBeVisuallyClose('#b30000');
-            render(colors);
         });
 
     });
 
     describe('binary', function() {
         it('should reproduce example gray', function() {
-            var colors = ColorFactory.binary('#a6a6a6');
-            expect(colors[true]).toBeVisuallyClose('#a6a6a6');
-            expect(colors[false]).toBeVisuallyClose('#e6e6e6');
-            render(colors);
+            var colors = render("ColorFactory.binary('#a6a6a6')",'binary gray');
+            expect(colors[0]).toBeVisuallyClose('#a6a6a6');
+            expect(colors[1]).toBeVisuallyClose('#e6e6e6');
         });
         it('should reproduce example green', function() {
-            var colors = ColorFactory.binary('#80b696');
-            expect(colors[true]).toBeVisuallyClose('#80b696');
-            expect(colors[false]).toBeVisuallyClose('#cce8d7');
-            render(colors);
+            var colors = render("ColorFactory.binary('#80b696')",'binary green');
+            expect(colors[0]).toBeVisuallyClose('#80b696');
+            expect(colors[1]).toBeVisuallyClose('#cce8d7');
         });
         it('should reproduce example pink', function() {
-            var colors = ColorFactory.binary('#de68a6');
-            expect(colors[true]).toBeVisuallyClose('#de68a6');
-            expect(colors[false]).toBeVisuallyClose('#fbb4d9', 15);
-            render(colors);
+            var colors = render("ColorFactory.binary('#de68a6')",'binary pink');
+            expect(colors[0]).toBeVisuallyClose('#de68a6');
+            expect(colors[1]).toBeVisuallyClose('#fbb4d9', 15);
         });
     });
 

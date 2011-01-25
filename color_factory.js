@@ -3,6 +3,32 @@ if (typeof ColorFactory == 'undefined') {
 
     ColorFactory = {
         sixHexDigits: 0xffffff,
+
+        primaryColors: function() {
+            return ['#ff0','#ff0000','#0000ff'];
+        },
+
+        primaryAndSecondaryColors: function() {
+            return ['#ff0','#f90','#f00','#90f','#00f','#0f6'];
+        },
+
+        complementary: function(color) {
+            var hsl = color.toHSL();
+            hsl[0] = (hsl[0] + 180) % 360;
+            return [ColorHelper.hslToHexColor(hsl),color];
+        },
+
+        // two adjacent colors on 12-part color wheel
+        analogous: function(color) {
+            var hsl = color.toHSL();
+            hsl[0] = (hsl[0] + 60) % 360;
+            var color0 = ColorHelper.hslToHexColor(hsl).darken(8).saturate(-6);
+            var hsl = color.toHSL();
+            hsl[0] = (hsl[0] + 330) % 360;
+            var color2 = ColorHelper.hslToHexColor(hsl);
+            return [color0,color,color2];
+        },
+
         random: function() {
             // even distribution within (0,0xffffff)
             var c = Math.round((Math.random() + ColorFactory.sixHexDigits) + (ColorFactory.sixHexDigits + 1)).toString(16);
@@ -13,7 +39,7 @@ if (typeof ColorFactory == 'undefined') {
             return ColorFactory.random().saturate(-100);
         },
         randomHue: function(s, l) {
-            h = Math.round(Math.random() * 256);
+            var h = Math.round(Math.random() * 256);
             return ColorHelper.hslToHexColor(h, s, l);
         },
         interpolate: function(color1, colorN, steps) {
@@ -21,7 +47,7 @@ if (typeof ColorFactory == 'undefined') {
             var hslN = colorN.toHSL();
             var delta = [];
             for (var d in hsl1) {
-                delta.push( (hslN[d] - hsl1[d]) / (steps - 1));
+                delta.push((hslN[d] - hsl1[d]) / (steps - 1));
             }
 
             var hsl = hsl1;
@@ -50,9 +76,9 @@ if (typeof ColorFactory == 'undefined') {
                 refColor = 'black';
             }
             var hsl = refColor.toHSL();
-            hsl[1] = Math.max(60,hsl[1]);
-            hsl[2] = Math.max(40,hsl[2]);
-            hsl[2] = Math.min(70,hsl[2]);
+            hsl[1] = Math.max(60, hsl[1]);
+            hsl[2] = Math.max(40, hsl[2]);
+            hsl[2] = Math.min(70, hsl[2]);
             var colors = [];
             for (var i = 0; i < count; i++) {
                 colors.push(ColorHelper.hslToHexColor(hsl));
@@ -82,8 +108,7 @@ if (typeof ColorFactory == 'undefined') {
 
         },
         binary: function(trueColor) {
-            var colors = {true: trueColor, false: trueColor.saturate(10).lighten(25)};
-            return colors;
+            return [trueColor, trueColor.saturate(10).lighten(25)];
         },
 
         /**
@@ -98,8 +123,8 @@ if (typeof ColorFactory == 'undefined') {
         diverging: function(startColor, count) {
 
         }
-        // diverge(array) => [[],[],[]]
-        // binary(array) =>
-    };
+// diverge(array) => [[],[],[]]
+// binary(array) =>
+    }
 }
 
