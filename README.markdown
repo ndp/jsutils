@@ -48,9 +48,9 @@ Generate color schemes appropriate to prototypes, visualizations and maps.
 
 Color scheme generation inspired by http://www.personal.psu.edu/cab38/ColorSch/Schemes.html
 
-* <code>ColorFactory.qualitative([refColor], count)</code> Qualitative schemes do not imply magnitude differences between legend classes, and hues are used to create the primary visual differences between classes. Qualitative schemes are best suited to representing nominal or categorical data.
-* <code>ColorFactory.sequential(startColor, [endColor], count)</code> Sequential schemes are suited to ordered data that progress from low to high. Lightness steps dominate the look of these schemes, with light colors for low data values to dark colors for high data values.
-* <code>ColorFactory.binary(trueColor)</code> returns object with true => darker color, false=>lighter color.
+* <code>ColorFactory.qualitative([refColor], count)</code> returns a qualitative scheme. This scheme does not imply magnitude differences between colors, and hues are used to create the primary visual differences between classes. Qualitative schemes are best suited to representing nominal or categorical data.
+* <code>ColorFactory.sequential(startColor, [endColor], count)</code> returns a sequential scheme. This is suited to ordered data that progress from low to high. Lightness steps dominate the look of these schemes, with light colors for low data values to dark colors for high data values.
+* <code>ColorFactory.binary(trueColor)</code> returns an array or two colors. Element 0 is the true (darker) color, and element 1 is the false (lighter) color.
 
 
 ## funks.js
