@@ -24,13 +24,14 @@ jasmine.Matchers.prototype.toBeVisuallyClose = function(expected, threshold) {
 
     var diffTotal = 0;
     for (d in diff) {
-        diffTotal += (d == 0) ? diff[d] / 3.6 : diff[d];
+        diffTotal += diff[d];
+        if (d == 0) diffTotal /= 3.6;
     }
 
     if (diffTotal > threshold * 3) {
         this.message = function() {
             return [
-                "Color " + this.actual + " expected to be visually close to " + expected + ", but differed: (" + diff[0] + "," + diff[1] + "," + diff[2] + ")."
+                "Color " + this.actual + " expected to be visually close to " + expected + ", but differed by HSV [" + diff[0] + "," + diff[1] + "," + diff[2] + "]."
             ];
         };
         return false;
