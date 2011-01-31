@@ -5,6 +5,20 @@
                 Object.prototype.toString.call(object) === '[object Array]';
     }
 
+
+    /*
+     Use a singleton cache of all color strings we see.
+     Each key points to a structure, which can have hex, rgb, etc. values in it.
+     */
+    var immutableCache = {};
+
+    // returns (or creates) the cached color structure
+    var colorCache = function(c) {
+        if (!immutableCache[c]) immutableCache[c] = {};
+        return immutableCache[c];
+    };
+
+
     var hslToHexColor = function(h, s, l) {
         if (isArray(h)) {
             l = h[2] || 0;
@@ -55,9 +69,42 @@
         return "#" + hex2(rgb[0]) + hex2(rgb[1]) + hex2(rgb[2]);
     };
 
-    ColorHelper = {
-        hslToHexColor: hslToHexColor
-    };
+    // [0..360, 0..100, 0.100]
+    // Ref. http://www.easyrgb.com/index.php?X=MATH&H=18#text18
+    var RGBtoHSL = function(rgb) {
+        rgb = rgb.toRGB();
+        var r = rgb[0] / 255,g = rgb[1] / 255,b = rgb[2] / 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var d = max - min; // Delta RGB value
+        var h, s, l = (max + min) / 2;
+
+
+        if (d == 0) { // gray?, no chroma...
+            h = 0;                                // HSl results from 0 to 1
+            s = 0;
+        } else {
+            // Chromatic data...
+            s = d / ( l < 0.5 ? ( max + min ) : ( 2 - max - min ));
+
+            var del_R = ( ( ( max - r ) / 6 ) + ( d / 2 ) ) / d;
+            var del_G = ( ( ( max - g ) / 6 ) + ( d / 2 ) ) / d;
+            var del_B = ( ( ( max - b ) / 6 ) + ( d / 2 ) ) / d;
+
+            if (r == max) h = del_B - del_G;
+            else if (g == max) h = ( 1 / 3 ) + del_R - del_B;
+            else if (b == max) h = ( 2 / 3 ) + del_G - del_R;
+
+            if (h < 0) h += 1;
+            if (h > 0) h -= 1;
+        }
+
+        h = Math.round(h * 360);
+        if (h < 0) h += 360;
+
+        var cache = colorCache(this);
+        cache.hsl = [h, Math.round(s * 100), Math.round(l * 100)];
+        return cache.hsl;
+    }
 
     var HTML4_COLORS = {
         'black'  : '#000000',
@@ -228,108 +275,69 @@
         'YellowGreen' :     '#9ACD32'
     };
 
-    /*
-     Use a singleton cache of all color strings we see.
-     Each key points to a structure, which can have hex, rgb, etc. values in it.
-     */
-    var immutableCache = {};
-
-    // returns (or creates) the cached color structure
-    var colorCache = function(c) {
-        if (!immutableCache[c]) immutableCache[c] = {};
-        return immutableCache[c];
-    };
-
-    String.prototype.toHexColor = function() {
-        if (this.substr(0, 1) == '#' && this.length == 7) {
-            colorCache(this)['hex'] = '' + this;
-        } else if (this.substr(0, 1) == '#' && this.length == 4) {
-            colorCache(this)['hex'] = '#' + this.substr(1, 1) + this.substr(1, 1) +
-                    this.substr(2, 1) + this.substr(2, 1) +
-                    this.substr(3, 1) + this.substr(3, 1);
-        } else {
-            colorCache(this)['hex'] = HTML4_COLORS[this] || HTML5_COLORS[this];
+    ColorHelper = {
+        hslToHexColor: hslToHexColor,
+        rgbToHSL: RGBtoHSL,
+        strToHexColor: function(str) {
+            if (str.substr(0, 1) == '#' && str.length == 7) {
+                colorCache(str)['hex'] = '' + str;
+            } else if (str.substr(0, 1) == '#' && str.length == 4) {
+                colorCache(str)['hex'] = '#' + str.substr(1, 1) + str.substr(1, 1) +
+                        str.substr(2, 1) + str.substr(2, 1) +
+                        str.substr(3, 1) + str.substr(3, 1);
+            } else {
+                colorCache(str)['hex'] = HTML4_COLORS[str] || HTML5_COLORS[str];
+            }
+            return colorCache(str)['hex'];
+        },
+        hexToRGB: function(hexStr) {
+            var cache = colorCache(hexStr);
+            if (cache.rgb) return cache.rgb;
+            var h = hexStr.toHexColor();
+            if (!h) throw "Unknown color '" + hexStr + "'";
+            cache.rgb = [parseInt(h.substr(1, 2), 16),parseInt(h.substr(3, 2), 16),parseInt(h.substr(5, 2), 16)];
+            return cache.rgb;
+        },
+        lighten: function(color, percent) {
+            var hsl = ColorHelper.rgbToHSL(color);
+            var newHSL = [hsl[0],hsl[1],Math.min(100, hsl[2] + percent)];
+            return ColorHelper.hslToHexColor(newHSL);
+        },
+        darken: function(color, percent) {
+            var hsl = ColorHelper.rgbToHSL(color);
+            var newHSL = [hsl[0],hsl[1],Math.max(0, hsl[2] - percent)];
+            return ColorHelper.hslToHexColor(newHSL);
+        },
+        saturate: function(color, percent) {
+            /**
+             * Increase or decrease the saturation of a color.
+             * @param percent positive values increase saturation, negative values desaturate.
+             */
+            var hsl = ColorHelper.rgbToHSL(color);
+            var newHSL = [hsl[0],Math.min(100, Math.max(0, hsl[1] + percent)), hsl[2]];
+            return ColorHelper.hslToHexColor(newHSL);
         }
-        return colorCache(this)['hex'];
     };
 
+    // configure these off?
+    String.prototype.toHexColor = function() {
+        return ColorHelper.strToHexColor(this);
+    };
     String.prototype.toRGB = function() {
-        var cache = colorCache(this);
-        if (cache.rgb) return cache.rgb;
-        var h = this.toHexColor();
-        if (!h) throw "Unknown color '" + this + "'";
-        cache.rgb = [parseInt(h.substr(1, 2), 16),parseInt(h.substr(3, 2), 16),parseInt(h.substr(5, 2), 16)];
-        return cache.rgb;
-    };
-
-    String.prototype.red = function() {
-        return this.toRGB()[0];
-    };
-    String.prototype.green = function() {
-        return this.toRGB()[1];
-    };
-    String.prototype.blue = function() {
-        return this.toRGB()[2];
+        return ColorHelper.hexToRGB(this);
     };
     String.prototype.lighten = function(percent) {
-        var hsl = this.toHSL();
-        var newHSL = [hsl[0],hsl[1],Math.min(100, hsl[2] + percent)];
-        return hslToHexColor(newHSL);
+        return ColorHelper.lighten(this, percent);
     };
 
     String.prototype.darken = function(percent) {
-        var hsl = this.toHSL();
-        var newHSL = [hsl[0],hsl[1],Math.max(0, hsl[2] - percent)];
-        return hslToHexColor(newHSL);
+        return ColorHelper.darken(this, percent);
     };
-
-
-    /**
-     * Increase or decrease the saturation of a color.
-     * @param percent positive values increase saturation, negative values desaturate.
-     */
     String.prototype.saturate = function(percent) {
-        var hsl = this.toHSL();
-        var newHSL = [hsl[0],Math.min(100, Math.max(0, hsl[1] + percent)), hsl[2]];
-        return hslToHexColor(newHSL);
+        return ColorHelper.saturate(this, percent);
     };
-
-    // [0..360, 0..100, 0.100]
-    // Ref. http://www.easyrgb.com/index.php?X=MATH&H=18#text18
     String.prototype.toHSL = function() {
-        var rgb = this.toRGB();
-        var r = this.red() / 255,g = this.green() / 255,b = this.blue() / 255;
-        var max = Math.max(r, g, b), min = Math.min(r, g, b);
-        var d = max - min; // Delta RGB value
-        var h, s, l = (max + min) / 2;
-
-
-        if (d == 0) { // gray?, no chroma...
-            h = 0;                                // HSl results from 0 to 1
-            s = 0;
-        } else {
-            // Chromatic data...
-            s = d / ( l < 0.5 ? ( max + min ) : ( 2 - max - min ));
-
-            var del_R = ( ( ( max - r ) / 6 ) + ( d / 2 ) ) / d;
-            var del_G = ( ( ( max - g ) / 6 ) + ( d / 2 ) ) / d;
-            var del_B = ( ( ( max - b ) / 6 ) + ( d / 2 ) ) / d;
-
-            if (r == max) h = del_B - del_G;
-            else if (g == max) h = ( 1 / 3 ) + del_R - del_B;
-            else if (b == max) h = ( 2 / 3 ) + del_G - del_R;
-
-            if (h < 0) h += 1;
-            if (h > 0) h -= 1;
-        }
-
-        h = Math.round(h * 360);
-        if (h < 0) h += 360;
-
-        var cache = colorCache(this);
-        cache.hsl = [h, Math.round(s * 100), Math.round(l * 100)];
-        return cache.hsl;
+        return ColorHelper.rgbToHSL(this);
     };
-
 
 })();

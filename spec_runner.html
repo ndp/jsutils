@@ -7,6 +7,8 @@
   <script type="text/javascript" src="lib/jasmine-1.0.0.rc1/jasmine.js"></script>
   <script type="text/javascript" src="lib/jasmine-1.0.0.rc1/jasmine-html.js"></script>
 
+  <script type="text/javascript" src="doc_reporter.js"></script>
+
   <!-- include source files here... -->
   <script type="text/javascript" src="funks.js"></script>
   <script type="text/javascript" src="color_helpers.js"></script>
@@ -17,6 +19,7 @@
     <script type="text/javascript" src="lib/jquery-1.4.3.js"></script>
   <script type="text/javascript" src="spec/spec_helper.js"></script>
   <script type="text/javascript" src="spec/funks_spec.js"></script>
+  <script type="text/javascript" src="spec/color_helpers_spec.js"></script>
   <script type="text/javascript" src="spec/color_factory_spec.js"></script>
 
 </head>
@@ -24,6 +27,7 @@
 
 <script type="text/javascript">
   jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+//  jasmine.getEnv().addReporter(new DocReporter());
   jasmine.getEnv().execute();
 </script>
 
