@@ -55,25 +55,42 @@ describe('ColorFactory', function() {
         });
         it('should find complement to #9e01d6', function() {
             var colors = render("ColorFactory.complementary('#9e01d6')",'complementary #9e01d6');
-            expect(colors[0]).toBeVisuallyClose('#3ad501');
-//            expect(colors[0]).toBeVisuallyClose('#97fe03');
+//            expect(colors[0]).toBeVisuallyClose('#3ad501');
+            expect(colors[0]).toBeVisuallyClose('#97fe03');
         });
     });
 
     describe('analogous', function() {
-        it('should produce analogous colors from example', function() {
-            var colors = render("ColorFactory.analogous('#96fe04')",'analogous');
-            expect(colors.length).toEqual(3);
-            expect(colors[1]).toBeVisuallyClose('#96fe04');
-            expect(colors[0]).toBeVisuallyClose('#08d16b');
-            expect(colors[2]).toBeVisuallyClose('#fef807');
+        $.each([
+            ['#6d00ff','#0000ff','#0090ff'],
+            ['#ff7400','#ff0000','#cd0074'],
+            ['#9fee00','#ffff00','#ffd300'],
+            ['#04FC58','#96fe04','#EAFF04'],
+            ['#FE0435','#FC04C5','#8B16FB'],
+            ['#FF7590','#FD74DF','#BF7EFD'],
+            ['#1B71FB','#04FBD1','#38FD04']
+        ], function(index, item) {
+            it('should produce analogous colors from ' + item[1], function() {
+                var colors = render("ColorFactory.analogous('"+item[1]+"')",'analogous');
+                expect(colors.length).toEqual(3);
+                expect(colors[0]).toBeVisuallyClose(item[0]);
+                expect(colors[1]).toBeVisuallyClose(item[1]);
+                expect(colors[2]).toBeVisuallyClose(item[2]);
+            });
         });
-        it('should produce analogous colors from blue', function() {
-            var colors = render("ColorFactory.analogous('blue')",'analogous');
+        it('should produce analogous colors 04FBD1, 10°', function() {
+            var colors = render("ColorFactory.analogous('#04FBD1', 10)",'analogous');
             expect(colors.length).toEqual(3);
-            expect(colors[1]).toBeVisuallyClose('#0000ff');
-            expect(colors[0]).toBeVisuallyClose('#d006d0');
-            expect(colors[2]).toBeVisuallyClose('#007fff');
+            expect(colors[1]).toBeVisuallyClose('#04FBD1');
+            expect(colors[0]).toBeVisuallyClose('#0BCDFA');
+            expect(colors[2]).toBeVisuallyClose('#04FB91');
+        });
+        it('should produce analogous colors 04FBD1, 80°', function() {
+            var colors = render("ColorFactory.analogous('#04FBD1', 80)",'analogous');
+            expect(colors.length).toEqual(3);
+            expect(colors[1]).toBeVisuallyClose('#04FBD1');
+            expect(colors[0]).toBeVisuallyClose('#7A19FB');
+            expect(colors[2]).toBeVisuallyClose('#EFFF04');
         });
     });
 

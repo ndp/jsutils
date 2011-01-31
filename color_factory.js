@@ -19,12 +19,13 @@ if (typeof ColorFactory == 'undefined') {
         },
 
         // two adjacent colors on 12-part color wheel
-        analogous: function(color) {
+        analogous: function(color, angle) {
+            if (!angle) angle = 30;
             var hsl = color.toHSL();
-            hsl[0] = (hsl[0] + 60) % 360;
+            hsl[0] = (hsl[0] + angle) % 360;
             var color0 = ColorHelper.hslToHexColor(hsl).darken(8).saturate(-6);
             var hsl = color.toHSL();
-            hsl[0] = (hsl[0] + 330) % 360;
+            hsl[0] = (hsl[0] - angle + 360) % 360;
             var color2 = ColorHelper.hslToHexColor(hsl);
             return [color0,color,color2];
         },

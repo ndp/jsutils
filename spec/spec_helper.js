@@ -6,7 +6,7 @@ jasmine.Matchers.prototype.toBeDistinguishable = function() {
         if (hsl[1] < 50 || hsl[2] < 20 || hsl[2] > 70) {
             this.message = function() {
                 return [
-                    "Expected color " + colors[c] + " ("+hsl[0]+","+hsl[1]+","+hsl[2]+") to have distinguishable saturation and lightness."
+                    "Expected color " + colors[c] + " (" + hsl[0] + "," + hsl[1] + "," + hsl[2] + ") to have distinguishable saturation and lightness."
                 ];
             };
             return false;
@@ -16,21 +16,24 @@ jasmine.Matchers.prototype.toBeDistinguishable = function() {
 };
 
 jasmine.Matchers.prototype.toBeVisuallyClose = function(expected, threshold) {
-    if (typeof threshold == 'undefined') threshold = 10;
+    if (typeof threshold == 'undefined') threshold = 8;
     var expectedHsl = expected.toHSL();
     var actualHsl = this.actual.toHSL();
     var diff = [];
     for (var d in actualHsl) diff.push(Math.abs(expectedHsl[d] - actualHsl[d]));
 
+    var diffTotal = 0;
     for (d in diff) {
-        if (diff[d] > threshold) {
-            this.message = function() {
-                return [
-                    "Color " + this.actual + " expected to be visually close to "+expected+", but differed: ("+diff[0]+","+diff[1]+","+diff[2]+")."
-                ];
-            };
-            return false;
-        }
+        diffTotal += (d == 0) ? diff[d] / 3.6 : diff[d];
+    }
+
+    if (diffTotal > threshold * 3) {
+        this.message = function() {
+            return [
+                "Color " + this.actual + " expected to be visually close to " + expected + ", but differed: (" + diff[0] + "," + diff[1] + "," + diff[2] + ")."
+            ];
+        };
+        return false;
     }
     return true;
 }
