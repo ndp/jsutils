@@ -1,14 +1,8 @@
 Various javascript utilities that don't (yet) warrant packaging on their own.
 
-<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;">&nbsp;</div>
-<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;">&nbsp;</div>
-<div style="border: 1px solid black; background-color: red; height: 15px; width: 15px;">&nbsp;</div>
-
-
-
 ## color_helpers.js
 
-Utilities to perform color math and manipulation. Extracted from Csster.
+Utilities to perform color math and manipulation (extracted from Csster).
 
 *  <code>"#ab342c".darken(%)</code> -- make color darker by given percent
 *  <code>"#ab342c".lighten(%)</code> -- make color lighter by given percent
@@ -30,27 +24,33 @@ Opacity is currently not supported by the color model.
 
 Generate color schemes appropriate to prototypes, visualizations and maps.
 
+### Standard colors
 
-### Random colors (useful for prototypes)
+* <code>ColorFactory.primaryColors()</code> is yellow, red and blue.
+* <code>ColorFactory.primaryAndSecondaryColors()</code> yellow, orange, red, violet, blue and green.
+
+### Random colors
 
 * <code>ColorFactory.random()</code> a random color, somewhat evenly distributed.
 * <code>ColorFactory.randomGray()</code> a random gray scale value.
 * <code>ColorFactory.randomHue()</code> given a saturation and lightness returns a random color.
 
-### Interpolation
 
-*  <code>ColorFactory.interpolate(color1, colorN, steps)</code>
+### Related colors
+
+*  <code>ColorFactory.complementary(src)</code>
+*  <code>ColorFactory.interpolate(color1, colorN, steps)</code> fills in any number of colors "between" the two colors.
+*  <code>ColorFactory.analogous(src)</code> returns colors near the given color on the color wheel, at an angle of 30°
+*  <code>ColorFactory.analogous(src, angle)</code> returns colors near the given color on the color wheel, at the specified angle
 
 
 ### Color Schemes
 
 Color scheme generation inspired by http://www.personal.psu.edu/cab38/ColorSch/Schemes.html
 
-
 * <code>ColorFactory.qualitative([refColor], count)</code> Qualitative schemes do not imply magnitude differences between legend classes, and hues are used to create the primary visual differences between classes. Qualitative schemes are best suited to representing nominal or categorical data.
 * <code>ColorFactory.sequential(startColor, [endColor], count)</code> Sequential schemes are suited to ordered data that progress from low to high. Lightness steps dominate the look of these schemes, with light colors for low data values to dark colors for high data values.
 * <code>ColorFactory.binary(trueColor)</code> returns object with true => darker color, false=>lighter color.
-* <code>ColorFactory.diverging()</code> Diverging schemes put equal emphasis on mid-range critical values and extremes at both ends of the data range. The critical class or break in the middle of the legend is emphasized with light colors and low and high extremes are emphasized with dark colors that have contrasting hues.
 
 
 ## funks.js
