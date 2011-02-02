@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Jasmine Test Runner</title>
+
+  <script type="text/javascript" src="funks.js"></script>
+  <script type="text/javascript" src="color_helpers.js"></script>
+  <script type="text/javascript" src="color_factory.js"></script>
+  <script type="text/javascript" src="stub_console.js"></script>
+
+    <script type="text/javascript" src="lib/jquery-1.4.3.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+$.fn.life=function(data) {
+    var $this = $(this);
+    $this.empty();
+    var $ul = $('<ul>').appendTo($this);
+
+    $('<li>').appendTo($ul);
+    $('<li>').appendTo($ul);
+    $('<li>').appendTo($ul);
+}
+
+    $(function() {
+        $('#it').life({
+            hats: {
+                1989: ['programmer','team lead'], // spc
+                1990: ['programmer','team lead'],
+                1991: ['programmer','team lead', 'prototyper', 'ui designer', 'visual designer','project manager'], // farallon
+                1992: ['programmer','team lead', 'ui designer','project manager'], // "
+                1993: ['programmer', 'ui designer','project manager'], // navis
+                1994: ['programmer', 'ui designer','project manager'],
+                1995: ['programmer','team lead', 'ui designer','project manager'],
+                1996: ['programmer','team lead', 'ui designer','project manager'],
+                1997: ['programmer','team lead', 'ui designer','project manager'],
+                1998: ['programmer','team lead', 'ui designer','project manager'],
+                1999: ['programmer','team lead', 'ui designer','project manager'],
+                2000: ['programmer', 'visual designer'], // ndp software
+                2001: ['programmer', 'prototyper', 'visual designer','project manager'],
+                2002: ['programmer', 'visual designer','project manager'],
+                2003: ['programmer','project manager'],
+                2004: ['programmer','project manager'],
+                2005: ['programmer','team lead'], // greatschools
+                2006: ['programmer','team lead','project manager'],
+                2007: ['programmer'], // tbd
+                2008: ['programmer','team lead','project manager'], // c5
+                2009: ['programmer','team lead','project manager'],
+                2010: ['programmer','team lead', 'prototyper','project manager']
+            }
+        });
+    })
+</script>
+
+<div id="it"></div>
+
+</body>
+</html>
+
+
