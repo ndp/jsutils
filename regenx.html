@@ -81,7 +81,9 @@ function rand(n) {
 
 function findInterestingCharacters(samples) {
     var chars = "";
-    for (s in samples) chars += samples[s];
+    for (s in samples) {
+        if (samples[s]) chars += samples[s];
+    }
     return chars;
 }
 
@@ -91,7 +93,7 @@ function randChr() {
 }
 
 function randOp() {
-    var ops = ['.','.+','\\w','*'];
+    var ops = ['.','.+','\\w','*','?'];
     return ops[rand(ops.length)];
 }
 
@@ -102,22 +104,12 @@ function mutate(t) {
 
     var piece = rand(3) + 1;
     var pos = rand(r[piece].length + 1);
-
-    if (rand(100) < 20) {
-        // remove something?
-        r[piece] = r[piece].slice(pos, rand(r[piece].length));
-    } else if (rand(80) < 20) {
-        // add character
-        r[piece] = r[piece] + randChr();
-    } else if (rand(50) < 20) {
-        r[piece] = randChr() + r[piece];
-    } else if (rand(50) < 20) {
-        r[piece] = r[piece].replace(randOp(), '');
-    } else if (rand(50) < 20) {
-        r[piece] = randOp() + r[piece];
-    } else {
-        // add operator
-        r[piece] += randOp();
+    var zeroOrOne = Math.round(Math.random());
+    if (rand(100) < 50) {
+        r[piece] = r[piece].slice(0, pos) + r[piece].slice(pos + 1 + zeroOrOne, r[piece].length);
+    } else  {
+        var whatToAdd = zeroOrOne ? randChr() : randOp();
+        r[piece] = r[piece].slice(0, pos) + whatToAdd + r[piece].slice(pos+1, -1);
     }
 
 
