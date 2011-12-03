@@ -1,0 +1,282 @@
+<html>
+
+<head>
+
+<script type="text/javascript" src="lib/jquery-1.4.3.js"></script>
+<script type="text/javascript">
+
+
+var stopSignal;
+var solutionsHash = {};
+var solutions = [];
+var interestingCharacters;
+
+function start(samples, callback) {
+
+    solutionsHash = {};
+    solutions = [];
+    interestingCharacters = findInterestingCharacters(samples);
+
+    var ok = nextGeneration('^(.*)$', samples, callback);
+
+    spawn();
+
+    function spawn() {
+        solutions = solutions.slice(0, 150);
+        generateGenerations(1, samples, callback);
+        if (stopSignal) {
+            confirmStopped();
+        } else {
+            setTimeout(spawn, 100);
+        }
+    }
+
+    return solutions[0];
+}
+
+function generateGenerations(count, samples, callback) {
+    var ok = true;
+    for (var g = 0; g < count && ok; g++) {
+        var bestParents = solutions.slice(0, 150);
+        for (i = 0; i < bestParents.length; i++) {
+            ok = ok && nextGeneration(bestParents[i][0], samples, callback);
+        }
+    }
+    return ok;
+}
+
+
+function isViable(r) {
+    try {
+        RegExp(r)
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function score(r, samples) {
+    var m, re, sample, score = -r.length - 3 * r.split('*').length - 2 * r.split('.').length;
+    re = new RegExp(r);
+    for (sample in samples) {
+        m = re.exec(sample)
+        if (samples[sample]) {
+            if (m) {
+                score += 2;
+                if (m[1] == samples[sample]) {
+                    score += 8;
+                }
+            }
+        } else {
+            score += (m) ? -10 : 5;
+        }
+    }
+    return score;
+}
+
+
+function rand(n) {
+    return Math.floor(Math.random() * n);
+}
+
+function findInterestingCharacters(samples) {
+    var chars = "";
+    for (s in samples) chars += samples[s];
+    return chars;
+}
+
+
+function randChr() {
+    return interestingCharacters[rand(interestingCharacters.length)];
+}
+
+function randOp() {
+    var ops = ['.','.+','\\w','*'];
+    return ops[rand(ops.length)];
+}
+
+function mutate(t) {
+    // split it apart into parse tree
+    var r = /^\^(.*)\((.*)\)(.*)\$$/.exec(t);
+//            var before = r[1], middle = r[2], after = r[3];
+
+    var piece = rand(3) + 1;
+    var pos = rand(r[piece].length + 1);
+
+    if (rand(100) < 20) {
+        // remove something?
+        r[piece] = r[piece].slice(pos, rand(r[piece].length));
+    } else if (rand(80) < 20) {
+        // add character
+        r[piece] = r[piece] + randChr();
+    } else if (rand(50) < 20) {
+        r[piece] = randChr() + r[piece];
+    } else if (rand(50) < 20) {
+        r[piece] = r[piece].replace(randOp(), '');
+    } else if (rand(50) < 20) {
+        r[piece] = randOp() + r[piece];
+    } else {
+        // add operator
+        r[piece] += randOp();
+    }
+
+
+    // compile into string
+    return '^' + r[1] + '(' + r[2] + ')' + r[3] + '$';
+}
+
+
+function childrenOf(parent, count) {
+    var children = [];
+    for (var i = 0; i < count; i++) {
+        children.push(mutate(parent));
+    }
+    return children;
+}
+
+function isAlreadyFound(solution) {
+    return solutionsHash[solution];
+}
+
+function solutionFound(solution, score) {
+    if (!solutionsHash[solution]) {
+        solutionsHash[solution] = score;
+        if (score) {
+            solutions.push([solution,score]);
+            solutions = solutions.sort(function(a, b) {
+                return b[1] - a[1]
+            })
+        }
+    }
+}
+
+function nextGeneration(parent, samples, callback) {
+
+    var children = childrenOf(parent, 1000);
+
+    var ok = true;
+    for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+
+        if (isViable(child) && !isAlreadyFound(child)) {
+            var s = score(child, samples);
+            solutionFound(child, s);
+            ok = ok && callback(child, s);
+        }
+    }
+    return ok;
+}
+
+function domFromSamples(samples) {
+    var $matches = $('.matches'), $nonMatches = $('.non-matches'), sample, result, $s;
+    for (sample in samples) {
+        result = samples[sample];
+        $s = $('<div></div>');
+        if (result) {
+            $s.appendTo($matches);
+            $('<input name="input">').val(sample).appendTo($s);
+            $('<input name="output">').val(result).appendTo($s);
+        } else {
+            $s.appendTo($nonMatches);
+            $('<input name="input">').val(sample).appendTo($s);
+        }
+    }
+}
+
+function samplesFromDom() {
+    var samples = {},
+            $matches = $('.matches'),
+            $nonMatches = $('.non-matches');
+
+    $matches.find('div').each(function() {
+        var val = $(this).find('[name=input]').val();
+        if (val) samples[val] = $(this).find('[name=output]').val();
+    });
+    $nonMatches.find('div').each(function() {
+        var val = $(this).find('[name=input]').val();
+        if (val) samples[val] = null;
+    });
+    return samples;
+}
+
+function startNewSet() {
+    var samples = samplesFromDom();
+    var max = 0, count = 0;
+    var $solutions = $('#solutions').empty();
+    var regex = start(samples, function(r, score) {
+        if (score > max) {
+            console.log('new max: ', r, score, ' count=', count);
+            $solutions.html($solutions.html() + '<br>' + r + ' (' + score + ') after ' + count);
+            $('#best-solution').text(r);
+            max = score;
+        }
+        count++;
+
+        return true;
+    });
+}
+
+function signalStop() {
+    stopSignal = true;
+}
+
+function confirmStopped() {
+    stopSignal = false;
+    $('#start').text('Start');
+}
+
+
+jQuery(function() {
+
+
+    domFromSamples({
+        andy: 'and',
+        android: 'and',
+        andrew: 'and',
+        andres: 'and',
+        steve: null,
+        anna: null,
+        endy: null,
+        aandy: null
+    });
+
+
+//    startNewSet();
+
+    $('#start').click(function() {
+        if ($(this).text() == 'Start') {
+            startNewSet();
+            $(this).text('Stop');
+        } else {
+            signalStop();
+            $(this).text('Stopping...');
+        }
+    });
+});
+
+</script>
+
+<style>
+    .matches, .non-matches {
+    }
+</style>
+</head>
+<body>
+<h1 id='best-solution'>???</h1>
+<button id="start">Start</button>
+<table>
+    <tr>
+        <td>
+            <div class="matches"><h2>Matches</h2></div>
+        </td>
+        <td>
+            <div class="non-matches"><h2>Non-Matches</h2></div>
+        </td>
+    </tr>
+</table>
+<div id='solutions'>xxx</div>
+
+</body>
+
+
+</html>
