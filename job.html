@@ -1,0 +1,231 @@
+<html>
+  <head>
+    <title>Job Voyager</title>
+    <link type="text/css" rel="stylesheet" href="ex.css?3.2"/>
+    <script type="text/javascript" src="lib/protovis-r3.2.js"></script>
+    <script type="text/javascript" src="lib/jobs.js"></script>
+    <style type="text/css">
+
+#fig {
+  width: 860px;
+  height: 580px;
+}
+
+#footer {
+  font: 24pt helvetica neue;
+  padding-left: 40px;
+  color: #666;
+}
+
+#footer input {
+  font: 24pt helvetica neue;
+  background: none;
+  border: none;
+  outline: 0;
+}
+
+    </style>
+  </head>
+  <body>
+    <div id="center"><div id="fig">
+    <div style="text-align:right;padding-right:20;">
+      <b>Gender:</b>
+      <input type="radio" name="gender" id="men" onchange="update(gender = 1);"
+      ><label for="men">Men</label>
+      <input type="radio" name="gender" id="women" onchange="update(gender = 2);"
+      ><label for="women">Women</label>
+      <input type="radio" name="gender" id="any" checked onchange="update(gender = 0);"
+      ><label for="any">Any</label>
+    </div>
+    <script type="text/javascript+protovis">
+
+/* Interaction state. */
+    re = "";
+
+/* Flatten the tree into an array to faciliate transformation. */
+var jobs = pv.flatten(jobs)
+    .key("job")
+    .key("year", function(i) {return years[i]})
+    .key("people")
+    .array();
+
+/*
+* Use per-year sums to normalize the data, so we can compute a
+* percentage. Use per-gender+job sums to determine a saturation encoding.
+*/
+var sumByYear = pv.nest(jobs)
+    .key(function(d) {return d.year})
+    .rollup(function(v) {return pv.sum(v, function(d) {return d.people})});
+  sumByJob = pv.nest(jobs)
+    .rollup(function(v) {return pv.sum(v, function(d) {return d.people})});
+
+/* Cache the percentage of people employed per year. */
+jobs.forEach(function(d) {return d.percent = 100 * d.people / sumByYear[d.year]});
+
+/* Sizing parameters and scales. */
+var w = 800,
+    h = 480,
+    x = pv.Scale.linear(1987, 2010).range(0, w),
+    y = pv.Scale.linear(0, 100).range(0, h),
+    color = pv.Scale.ordinal(1, 2).range("#33f", "#f33"),
+    alpha = pv.Scale.linear(pv.values(sumByJob)).range(.4, .8);
+
+/* The root panel. */
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .top(9.5)
+    .left(39.5)
+    .right(20)
+    .bottom(30);
+
+vis.add(pv.Bar)
+    .fillStyle("white")
+    .cursor("pointer");
+
+/* Y-axis ticks and labels. */
+vis.add(pv.Rule)
+    .data(function() {return y.ticks()})
+    .bottom(y)
+    .strokeStyle(function(y) {return y ? "#ccc" : "#000"})
+  .anchor("left").add(pv.Label)
+    .text(function(d) {return y.tickFormat(d) + "%"});
+
+/* Stack layout. */
+var area = vis.add(pv.Layout.Stack)
+    .layers(function() {return pv.nest(jobs.filter(test))
+        .sortKeys(function(a, b) {return pv.reverseOrder(a.substring(1), b.substring(1))})
+        .entries()})
+    .values(function(d) {return d.values})
+    .x(function(d) {return x(d.year)})
+    .y(function(d) {return y(d.percent)})
+  .layer.add(pv.Area)
+    .def("alpha", function(d) {return alpha(sumByJob[d.key])})
+    .fillStyle(function(d) {return color(d.gender).alpha(this.alpha())})
+    .cursor("pointer")
+    .event("mouseover", function(d) {return this.alpha(1).title(d.job)})
+    .event("mouseout", function(d) {return this.alpha(null)})
+
+/* Stack labels. */
+vis.add(pv.Panel)
+    .extend(area.parent)
+  .add(pv.Area)
+    .extend(area)
+    .fillStyle(null)
+  .anchor("center").add(pv.Label)
+    .def("max", function(d) {return pv.max.index(d.values, function(d) {return d.percent})})
+    .visible(function() {return this.index == this.max()})
+    .font(function(d) {return Math.round(5 + Math.sqrt(y(d.percent))) + "px sans-serif"})
+    .textMargin(6)
+    .textStyle(function(d) {return "rgba(0, 0, 0, " + (Math.sqrt(y(d.percent)) / 7) + ")"})
+    .textAlign(function() {return this.index < 5 ? "left" : "right"})
+    .text(function(d, p) {return p.key.substring(1)});
+
+/* X-axis ticks and labels. */
+vis.add(pv.Rule)
+    .data(pv.range(1987, 2010, 1))
+    .left(x)
+    .bottom(-6)
+    .height(5)
+  .anchor("bottom").add(pv.Label);
+
+
+
+/* Recompute the y-scale domain based on query filtering. */
+function update() {
+  y.domain(0, Math.min(100, pv.max(pv.values(pv.nest(jobs.filter(test))
+      .key(function(d) {return d.year})
+      .rollup(function(v) {return pv.sum(v, function(d) {return d.percent})})))));
+  vis.render();
+}
+
+vis.render();
+
+
+
+
+
+
+
+
+
+
+
+
+
+///* Inspired by Lee Byron's test data generator. */
+//function layers(n, m) {
+//    function bump(a) {
+//        var x = 1 / (.1 + Math.random()),
+//                y = 2 * Math.random() - .5,
+//                z = 10 / (.1 + Math.random());
+//        for (var i = 0; i < m; i++) {
+//            var w = (i / m - y) * z;
+//            a[i] += x * Math.exp(-w * w);
+//        }
+//    }
+//
+//    return pv.range(n).map(function() {
+//        var a = [], i;
+//        for (i = 0; i < m; i++) a[i] = 0;
+//        for (i = 0; i < 5; i++) bump(a);
+//        return a;
+//    });
+//}
+//
+///* Another layer generator using gamma distributions. */
+//function waves(n, m) {
+//    return pv.range(n).map(function(i) {
+//        return pv.range(m).map(function(j) {
+//            var x = 20 * j / m - i / 3;
+//            return x > 0 ? 2 * x * Math.exp(-.5 * x) : 0;
+//        });
+//    });
+//}
+//
+//
+//var n = 20, // number of layers
+//        m = 20, // number of samples per layer
+//        data = layers(n, m);
+//
+//data= [
+//    [1,2,1,1,1,1,1,1,1,1,1,2,3,4,3,2,1],
+//    [1,2,1,1,1,1,1,1,1,1,1,2,3,4,3,2,1],
+//    [1,2,1,1,1,1,1,1,1,1,1,2,3,4,3,2,1],
+//    [1,2,1,1,1,1,1,1,1,1,1,2,3,4,3,2,1],
+//    [1,2,1,1,1,1,1,1,1,1,1,2,3,4,3,2,1]
+//];
+//
+//var w = document.body.clientWidth,
+//        h = document.body.clientHeight,
+//        x = pv.Scale.linear(0, m - 1).range(0, w),
+//        y = pv.Scale.linear(0, 2 * n).range(0, h);
+//
+//var vis = new pv.Panel()
+//        .width(w)
+//        .height(h);
+//
+//console.log('%o',data);
+//
+//vis.add(pv.Layout.Stack)
+//        .layers(data)
+//        .order("inside-out")
+//        .offset("wiggle")
+//        .x(x.by(pv.index))
+//        .y(y)
+//        .layer.add(pv.Area)
+//        .fillStyle(pv.ramp("#aad", "#556").by(Math.random))
+//        .strokeStyle(function() {this.fillStyle().alpha(.5)});
+//
+//vis.render();
+
+
+
+
+    </script>
+    <div id="footer">
+      <label for="query">search: </label>
+      <input id="query" type="text" onkeyup="search(this.value);">
+    </div>
+  </div></div></body>
+</html>

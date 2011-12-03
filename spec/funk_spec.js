@@ -163,3 +163,16 @@ describe('roundRobin()', function() {
 
 
 });
+
+
+describe('fn shorteners',function() {
+    it('should shorten',function() {
+        expect(f('2+2')()).toEqual(4);
+    });
+
+});
+
+
+describe('currrying', function() {
+   it('should ')
+});

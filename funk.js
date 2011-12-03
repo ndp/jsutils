@@ -86,8 +86,28 @@ if (typeof Funk == 'undefined') {
 
 
     Funk.toggle = Funk.roundRobin;
+    
+    
+    Funk.multimethod = function(dispatchFn) {
 
+    }
+    // null => fn is default
+    Funk.integerDispatch = function(hash) {
+
+    }
+    
 }
+
+function f(code) {
+    return function() { return eval(code)}
+}
+
+// "1+1".toFn();
+Object.prototype.toFn = function() {
+  var t = this;
+  return function() { return eval(t.toString()) };
+}
+
 
 
 

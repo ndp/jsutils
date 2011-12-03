@@ -1,36 +1,37 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+        "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <title>Jasmine Test Runner</title>
-  <link rel="stylesheet" type="text/css" href="lib/jasmine-1.0.0.rc1/jasmine.css">
-  <script type="text/javascript" src="lib/jasmine-1.0.0.rc1/jasmine.js"></script>
-  <script type="text/javascript" src="lib/jasmine-1.0.0.rc1/jasmine-html.js"></script>
+    <title>Jasmine Test Runner</title>
+    <link rel="stylesheet" type="text/css" href="lib/jasmine-1.0.0.rc1/jasmine.css">
+    <script type="text/javascript" src="lib/jasmine-1.0.0.rc1/jasmine.js"></script>
+    <script type="text/javascript" src="lib/jasmine-1.0.0.rc1/jasmine-html.js"></script>
 
-  <script type="text/javascript" src="doc_reporter.js"></script>
+    <script type="text/javascript" src="doc_reporter.js"></script>
 
-  <!-- include source files here... -->
-  <script type="text/javascript" src="funks.js"></script>
-  <script type="text/javascript" src="color_helpers.js"></script>
-  <script type="text/javascript" src="color_factory.js"></script>
-  <script type="text/javascript" src="stub_console.js"></script>
-  <script type="text/javascript" src="lib/jquery-1.4.3.js"></script>
-  <script type="text/javascript" src="jquery.delegateEvent.js"></script>
+    <!-- include source files here... -->
+    <script type="text/javascript" src="funk.js"></script>
+    <script type="text/javascript" src="color_helpers.js"></script>
+    <script type="text/javascript" src="color_factory.js"></script>
+    <script type="text/javascript" src="stub_console.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.4.3.js"></script>
+    <script type="text/javascript" src="jquery.delegateEvent.js"></script>
 
-  <!-- include spec files here... -->
-  <script type="text/javascript" src="spec/spec_helper.js"></script>
-  <script type="text/javascript" src="spec/funks_spec.js"></script>
-  <script type="text/javascript" src="spec/color_helpers_spec.js"></script>
-  <script type="text/javascript" src="spec/color_factory_spec.js"></script>
-  <script type="text/javascript" src="spec/jquery_plugins_spec.js"></script>
+    <!-- include spec files here... -->
+    <script type="text/javascript" src="spec/spec_helper.js"></script>
+    <script type="text/javascript" src="spec/funk_spec.js"></script>
+    <script type="text/javascript" src="spec/color_helpers_spec.js"></script>
+    <script type="text/javascript" src="spec/color_factory_spec.js"></script>
+    <script type="text/javascript" src="spec/jquery_plugins_spec.js"></script>
+    <script type="text/javascript" src="spec/query_string_spec.js"></script>
 
 </head>
 <body>
 
 <script type="text/javascript">
-  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-//  jasmine.getEnv().addReporter(new DocReporter());
-  jasmine.getEnv().execute();
+    jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+    //  jasmine.getEnv().addReporter(new DocReporter());
+    jasmine.getEnv().execute();
 </script>
 
 </body>
