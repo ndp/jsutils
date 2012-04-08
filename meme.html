@@ -3,8 +3,36 @@
 <html>
 <head>
     <title></title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.meme.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var $meme = $('.meme-image').meme({
+                img2: 'http://img2.timeinc.net/people/i/2007/specials/sma07/mag/brad_pitt.jpg',
+                img: 'http://s3.amazonaws.com/kym-assets/photos/images/original/000/030/312/20080531_090037558975_0.jpg'
+            });
+            $('#top').keyup(function() {
+                $meme.trigger('setTopText', [$(this).val()]);
+            });
+            $('#bottom').keyup(function() {
+                $meme.trigger('setBottomText', [$(this).val()]);
+            });
+        });
+    </script>
+    <style>
+        input {
+            display: block;
+            padding: 2px 3px;
+            font: 20px arial;
+        }
+    </style>
 </head>
 <body>
 
+<div class="meme-image">
+
+</div>
+<input id="top" type="text">
+<input id="bottom" type="text">
 </body>
 </html>
