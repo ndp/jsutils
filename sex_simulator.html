@@ -1,0 +1,104 @@
+<html>
+<body>
+<style type="text/css">
+    div.life {
+        height: 400px;
+        width: 30em;
+        overflow-y: scroll;
+        float: left;
+        font: 8px/10px courier;
+    }
+
+    span {
+        color: gray;
+    }
+
+    span.sex {
+        color: #9932cc;
+    }
+
+    span.pregnant {
+        color: red;
+        font-size: 12px;
+    }
+</style>
+
+</body>
+</html>
+
+<script type="text/javascript" src="lib/jquery-1.4.3.js"></script>
+<script>
+
+    function failureRate(percentage) {
+        return percentage / 100 / 365;
+    }
+
+
+    var events = {
+//        sunrise: 0.99999999,
+//        sunset: 0.99999999,
+//        full_moon: 1 / 28,
+        sex:{label: "Sex A few times per month to weekly", daily_chance: 4 / 30},
+        unproteced:{label: "Pregnancy using no protection", daily_chance: failureRate(85)},
+        withdrawal:{label: "Pregnancy using withdrawal", daily_chance: failureRate(27)},
+        condom:{label: "Pregnancy using condom", daily_chance: failureRate(8)},
+        pill:{label: "Pregnancy using pill", daily_chance: failureRate(8) }, // perfect use .3},
+        implant:{label: "Pregnancy using Implanon", daily_chance: failureRate(.05)},
+        iud_mirena:{label: "Pregnancy using Mirena IUD", daily_chance: failureRate(.2)},
+        iud_paragard:{label: "Pregnancy using Paragard IUD", daily_chance: failureRate(.6)},
+        ring:{label: "Pregnancy using NuvaRing", daily_chance: failureRate(8)}
+    };
+
+
+    function simulate(events, days) {
+        var result = [];
+        while (days-- >= 0) {
+            var day = {};
+            for (e in events) {
+                day[e] = Math.random() < events[e].daily_chance;
+            }
+            result.push(day);
+        }
+        return result;
+    }
+
+    var $none = $('<div>').addClass('life').attr('title','Pregnancy using no protection').appendTo('body');
+    var $pill = $('<div>').addClass('life').attr('title','Pregnancy using pill').appendTo('body');
+
+    var month = 0;
+    var year = 2011;
+
+    var drawMonth = function() {
+        var results = simulate(events, 30);
+
+        function append($month, pregnancyStat) {
+
+            $('<span>').text('' + (month + 1) + '/' + year + ': ').appendTo($month);
+
+            for (var i = 0; i < results.length; i++) {
+                var result = results[i];
+                var $div = $('<span>').text('o').appendTo($month);
+                if (result['Sex A few times per month to weekly']) {
+                    $div.text('X').addClass('sex');
+                }
+                if (result[pregnancyStat]) {
+                    $div.text('P').addClass('pregnant');
+                }
+            }
+        }
+
+        var $month = $('<div>').appendTo($none);
+        append($month, $none.attr('title'));
+        $month = $('<div>').appendTo($pill);
+        append($month, $pill.attr('title'));
+
+        month++;
+        month = month % 12;
+        if (month == 0) year ++;
+    }
+
+    var interval = setInterval(drawMonth, 300);
+
+    $none.add($pill).click(function() {clearInterval(interval)});
+
+</script>
