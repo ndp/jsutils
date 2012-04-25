@@ -1,0 +1,161 @@
+<html>
+
+<head>
+
+    <link href='http://fonts.googleapis.com/css?family=Dawning+of+a+New+Day|Satisfy' rel='stylesheet' type='text/css'>
+
+    <script type="text/javascript" src="lib/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.8.19.custom.min.js"></script>
+
+    <script type="text/javascript">
+
+        $.fn.windowizer = function () {
+            var width = $(this).width();
+            var $divs = $(this).children();
+            var height = Math.max($(this).height(), $divs.first().height(), $divs.last().height());
+            var height = $(this).height();
+            $(this).css('position', 'relative');
+            $divs.css({
+                position: 'absolute',
+                top: 0,
+                width: width,
+                height: height,
+                zIndex: 10,
+                backgroundColor: '#333'
+            });
+            var $first = $divs.first();
+            var $last = $divs.last();
+            $first.css('left',0);
+            $last.css('right',0);
+            $('img', $first).css('float', 'left');
+            $('img', $last).css('float', 'right');
+
+            $divs.each(function () {
+                var title = $(this).attr('title');
+                if (title) {
+                    var $header = $('<div></div>').addClass('header').css(
+                            {
+                                zIndex: 51,
+                                color: 'white',
+                                backgroundColor: 'transparent'
+                            }
+                    );
+                    var $screen = $('<div></div>').addClass('screen').css(
+                            {
+                                zIndex: 50,
+                                color: 'white',
+                                backgroundColor: 'black',
+                                opacity:.3,
+                            }
+                    );
+                    $header.add($screen).text(title).appendTo(this).css({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: width - 80,
+                        padding: '0 40px',
+                        height:'90px',
+                        font: $(this).attr('data-title-font'),
+//                        '-webkit-transform': 'rotate(-90deg)',
+                        textAlign: 'left'
+                    });
+                }
+            });
+            $('.header,.screen', $last).css('text-align', 'right');
+
+
+
+//            $last.css('text-align', 'right');
+
+            var $wrapper = $last.wrap('<div></div>').parent();
+            $wrapper.css({
+                position: 'absolute',
+                'border-left': '1px solid black',
+                overflow: 'hidden',
+                width: '50%',
+                height: height,
+                right: 0,
+                top: 0,
+                backgroundColor: 'black'
+            });
+            var handleWidth = 20;
+            var $handle = $('<div></div>').addClass('handle');
+            $handle.css({
+                position: 'absolute',
+                top: 0,
+                left: '50%',
+                width: handleWidth,
+                height: height,
+                backgroundColor: 'gray',
+                zIndex: 100
+            }).prependTo(this);
+            $handle.draggable({axis: 'x',
+                drag: function (e) {
+                    var percent = Math.floor(100 - (e.pageX - handleWidth / 2) / width * 100);
+//                            console.log(e);
+                    $wrapper.css('width', '' + percent + '%');
+                }
+            });
+
+        }
+
+        $(window).on('load', function () {
+            $('.window').windowizer();
+        });
+
+    </script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0
+        }
+
+        .handle {
+            background-image: linear-gradient(left, rgb(153, 185, 255) 13%, rgb(76, 136, 255) 52%, rgb(153, 185, 255) 84%);
+            background-image: -o-linear-gradient(left, rgb(153, 185, 255) 13%, rgb(76, 136, 255) 52%, rgb(153, 185, 255) 84%);
+            background-image: -moz-linear-gradient(left, rgb(153, 185, 255) 13%, rgb(76, 136, 255) 52%, rgb(153, 185, 255) 84%);
+            background-image: -webkit-linear-gradient(left, rgb(153, 185, 255) 13%, rgb(76, 136, 255) 52%, rgb(153, 185, 255) 84%);
+            background-image: -ms-linear-gradient(left, rgb(153, 185, 255) 13%, rgb(76, 136, 255) 52%, rgb(153, 185, 255) 84%);
+
+            background-image: -webkit-gradient(linear, left top, right top, color-stop(0.13, rgb(153, 185, 255)), color-stop(0.52, rgb(76, 136, 255)), color-stop(0.84, rgb(153, 185, 255)));
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="window">
+    <div title="me" data-title-font="180px/45px 'Dawning of a New Day', cursive">
+        <img src="http://farm8.staticflickr.com/7191/6842869242_a2a229d074_z.jpg" width='50%'>
+        <img src="http://farm8.staticflickr.com/7180/6842868030_f18b577bef_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7201/6842869758_8d7b6d6b36_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7129/7058207793_f8574e478b_z.jpg" width='33%'>
+        <img src="http://farm6.staticflickr.com/5032/6912124736_39dba85091_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7194/6822450766_c91dc8c4da_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7209/6831879954_5e8dd9de13_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7191/7058213089_90ee99e4ff_z.jpg" width='33%'>
+        <img src="http://farm6.staticflickr.com/5197/7058218081_3d48e0406e_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7153/6696642261_2b4bbe0d94_n.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7144/6683030619_849980b5f6.jpg" width='25%'>
+        <img src="http://farm8.staticflickr.com/7001/6651078581_ffd30df454_z.jpg" width='50%'>
+        <img src="http://farm8.staticflickr.com/7259/6920718652_cab4379c41_z.jpg" width='50%'>
+    </div>
+    <div title="my inspirations" data-title-font="60px/90px 'Satisfy', cursive">
+        <img src="http://farm8.staticflickr.com/7119/7016640681_5d3696a806_z.jpg" width='50%'>
+        <img src="http://farm8.staticflickr.com/7102/6881766642_32a6b19f4b_z.jpg" width='33%'>
+        <img src="http://farm8.staticflickr.com/7238/6916883512_b7b902a6c5.jpg" width='33%'>
+        <img src="http://farm7.staticflickr.com/6032/7022832853_bf57d7fd66_z.jpg" width='25%'>
+        <img src="http://farm8.staticflickr.com/7086/7023513387_8760a79072_z.jpg" width='25%'>
+        <img src="http://modcloth.files.wordpress.com/2012/04/frames.jpg" width='50%'>
+        <img src="http://modcloth.files.wordpress.com/2012/04/ff.jpg?w=600&h=410" width='50%'>
+        <img src="http://modcloth.files.wordpress.com/2012/04/dailyshirley.jpg" width='50%'>
+        <img src="http://modcloth.files.wordpress.com/2012/04/just-married.jpg" width='50%'>
+        <img src="http://farm8.staticflickr.com/7126/6893492858_076598f425_z.jpg" width='50%'>
+        <img src="http://farm8.staticflickr.com/7276/7034041435_5bd1cb8bbc_z.jpg" width='50%'>
+    </div>
+</div>
+
+
+</body>
+
+</html>
