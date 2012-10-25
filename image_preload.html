@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="lib/jquery-1.6.2.js"></script>
+    <script type="text/javascript">
+
+        var images = $.map([
+            "7141/6524597825_e216e7717e",
+            '7144/6521096287_4df7ab5714'
+        ], function(src) {
+            return 'http://farm8.staticflickr.com/' + src + '.jpg';
+        });
+
+        $(function() {
+            $.each(images, function(i) {
+                $('<img>').attr('src', images[i]).appendTo('body');
+            });
+        });
+
+
+    </script>
+
+</head>
+
+<body>
+
+
+</body>
+
+</html>
