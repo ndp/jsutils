@@ -1,5 +1,60 @@
 Various javascript utilities that don't (yet) warrant packaging on their own.
 
+Copyright (c) Andrew J. Peterson, NDP Software
+
+## jQuery Plugins
+
+### dataContext
+jQuery plugin to collect multiple data attributes into an object, using the data attribute names as keys.
+ Looks up the DOM and collects all data attributes, but the deepest ones win.
+
+ #### Usage:
+  <pre>
+   $('<div data-product-id="1"></div>').dataContext(); // => {'product-id': '1'}
+   $('<div data-a="1"><span data-b="2"></span></div>').find('span').dataContext()); // => {a: '1', b: '2'}</pre>
+
+### delegateEvent
+Simple jQuery plugin to forward events from one element to a new
+target. Optionally provide a new event name.
+
+Usage:
+<pre>
+$('#id').bindAndDelegate('click',$('#other'));
+$('#id').bindAndDelegate('click',$('#other'),'id-clicked'); // new event
+</pre>
+
+### columnize
+
+Column level event triggering on a table. Handlers receive jQuery
+objects with all the cells of a single table row, so that hover and click behavior
+can be implemented on tables.
+<pre>
+         $('table').columnize().bind('columnmouseenter',function(e, $cells) {
+             $cells.addClass('hover');
+         }).bind('columnmouseleave',function(e, $cells) {
+             $cells.removeClass('hover');
+         });
+</pre>
+This is a primitive version of various other plugins,
+but generally all that is needed for most jobs.
+
+## Jasmine Helpers
+
+### Simple Fixture
+This is a lighter-weight alternative to jQuery-jasmine's fixture scheme. Provides a jQuery object
+`$fixture` that is in the DOM and cleaned out before each test.
+
+This tool does **not** facilitate
+loading of file-based fixtures. I advise against this, but if you must, use jQuery-jasmine.
+
+#### Usage:
+Include `simple_fixture.js`. Usually placing this in a spec_helper folder and restarting jasmine will do the trick.
+
+#### Color Matchers
+toBeDistinguishable
+toBeVisuallyClose
+
+
 ## color_helpers.js
 
 Utilities to perform color math and manipulation (extracted from Csster).
@@ -59,17 +114,4 @@ Color scheme generation inspired by http://www.personal.psu.edu/cab38/ColorSch/S
 
 
 
-## jquery.columnize.js
 
-Column level event triggering on a table. Handlers receive jQuery
-objects with all the cells of a single table row, so that hover and click behavior
-can be implemented on tables.
-<pre>
-         $('table').columnize().bind('columnmouseenter',function(e, $cells) {
-             $cells.addClass('hover');
-         }).bind('columnmouseleave',function(e, $cells) {
-             $cells.removeClass('hover');
-         });
-</pre>
-This is a primitive version of various other plugins,
-but generally all that is needed for most jobs.

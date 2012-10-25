@@ -19,3 +19,15 @@ describe('hashDiff()', function() {
   });
 });
 
+
+describe('Array.slice', function() {
+  it('should not convert null to {}', function() {
+    (function() {
+      expect(Array.prototype.slice.call(arguments)).toEqual([1,2,null,4]);
+    })(1,2,null,4);
+    (function() {
+      console.log(Array.prototype.slice.call(arguments));
+    })(1,2,null,4);
+
+  });
+});
