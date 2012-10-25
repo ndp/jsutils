@@ -11,7 +11,8 @@ jQuery plugin to collect multiple data attributes into an object, using the data
  **Usage:**
   <pre>
    $('&lt;div data-product-id="1"&gt;&lt;/div&gt;').dataContext(); // =&gt; {'product-id': '1'}
-   $('&lt;div data-a="1"&gt;&lt;span data-b="2"&gt;&lt;/span&gt;&lt;/div&gt;').find('span').dataContext()); // =&gt; {a: '1', b: '2'}&lt;/pre>
+   $('&lt;div data-a="1"&gt;&lt;span data-b="2"&gt;&lt;/span&gt;&lt;/div&gt;').find('span').dataContext()); // =&gt; {a: '1', b: '2'}
+   </pre>
 
 ### delegateEvent
 Simple jQuery plugin to forward events from one element to a new
