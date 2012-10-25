@@ -8,16 +8,16 @@ Copyright (c) Andrew J. Peterson, NDP Software
 jQuery plugin to collect multiple data attributes into an object, using the data attribute names as keys.
  Looks up the DOM and collects all data attributes, but the deepest ones win.
 
- #### Usage:
+ **Usage:**
   <pre>
-   $('<div data-product-id="1"></div>').dataContext(); // => {'product-id': '1'}
-   $('<div data-a="1"><span data-b="2"></span></div>').find('span').dataContext()); // => {a: '1', b: '2'}</pre>
+   $('&lt;div data-product-id="1"&gt;&lt;/div&gt;').dataContext(); // =&gt; {'product-id': '1'}
+   $('&lt;div data-a="1"&gt;&lt;span data-b="2"&gt;&lt;/span&gt;&lt;/div&gt;').find('span').dataContext()); // =&gt; {a: '1', b: '2'}&lt;/pre>
 
 ### delegateEvent
 Simple jQuery plugin to forward events from one element to a new
 target. Optionally provide a new event name.
 
-Usage:
+ **Usage:**
 <pre>
 $('#id').bindAndDelegate('click',$('#other'));
 $('#id').bindAndDelegate('click',$('#other'),'id-clicked'); // new event
@@ -28,12 +28,13 @@ $('#id').bindAndDelegate('click',$('#other'),'id-clicked'); // new event
 Column level event triggering on a table. Handlers receive jQuery
 objects with all the cells of a single table row, so that hover and click behavior
 can be implemented on tables.
+ **Usage:**
 <pre>
-         $('table').columnize().bind('columnmouseenter',function(e, $cells) {
-             $cells.addClass('hover');
-         }).bind('columnmouseleave',function(e, $cells) {
-             $cells.removeClass('hover');
-         });
+ $('table').columnize().bind('columnmouseenter',function(e, $cells) {
+     $cells.addClass('hover');
+ }).bind('columnmouseleave',function(e, $cells) {
+     $cells.removeClass('hover');
+ });
 </pre>
 This is a primitive version of various other plugins,
 but generally all that is needed for most jobs.
@@ -47,12 +48,11 @@ This is a lighter-weight alternative to jQuery-jasmine's fixture scheme. Provide
 This tool does **not** facilitate
 loading of file-based fixtures. I advise against this, but if you must, use jQuery-jasmine.
 
-#### Usage:
+ **Usage:**
 Include `simple_fixture.js`. Usually placing this in a spec_helper folder and restarting jasmine will do the trick.
 
-#### Color Matchers
-toBeDistinguishable
-toBeVisuallyClose
+### Color Matchers
+`toBeDistinguishable` and `toBeVisuallyClose`
 
 
 ## color_helpers.js
