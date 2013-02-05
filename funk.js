@@ -59,9 +59,54 @@ if (typeof Funk == 'undefined') {
     // Decorates a function such that it can only
     // be executed ever N milliseconds no matter how
     // frequently it is called.
-    Funk.throttle = function(f, milliseconds) {
+    Funk.throttle = function(fn, milliseconds) {
+      var ctx = this,
+          timeout = null,
+          lastCallAt = (new Date()).valueOf() - milliseconds;
 
-    }
+      return function() {
+        var args = Array.prototype.slice.call(arguments);
+        var now = (new Date()).valueOf();
+        if ((now - lastCallAt) >= milliseconds) {
+          fn.apply(ctx, args);
+          lastCallAt = now;
+        }
+
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        timeout = setTimeout(function () {
+          fn.apply(ctx, args);
+          lastCallAt = (new Date()).valueOf();
+        }, milliseconds);
+      }
+    };
+
+  /* Returns a fn that will be called repeatedly. In turn,
+     for each "burst" of calls, beforeFn and afterFn will
+     be called. A burst is a set of calls no further than
+     _milliseconds_ apart..
+
+    Repeats as needed.
+   */
+    Funk.beforeAndAfter = function(beforeFn, afterFn, milliseconds) {
+        var ctx = this, timeout = null;
+
+        return function() {
+          var args = Array.prototype.slice.call(arguments);
+          if (!timeout) {
+            beforeFn.apply(ctx, args);
+          }
+          if (timeout) {
+            clearTimeout(timeout);
+          }
+          timeout = setTimeout(function () {
+            afterFn.apply(ctx, args);
+            timeout = null;
+          }, milliseconds);
+        }
+      };
+
 
     // Callback for each frame, skipping if necessary
     Funk.playFrames = function(fn, frameCount, durationInMilliseconds) {
@@ -86,8 +131,8 @@ if (typeof Funk == 'undefined') {
 
 
     Funk.toggle = Funk.roundRobin;
-    
-    
+
+
     Funk.multimethod = function(dispatchFn) {
 
     }
@@ -95,7 +140,7 @@ if (typeof Funk == 'undefined') {
     Funk.integerDispatch = function(hash) {
 
     }
-    
+
 }
 
 function f(code) {

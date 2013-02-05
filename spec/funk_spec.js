@@ -165,6 +165,123 @@ describe('roundRobin()', function() {
 });
 
 
+describe('throttle', function() {
+  it('should call every 100 ms', function() {
+    count = 0, throttledCount = 0;
+    start = new Date().valueOf();
+    fn = Funk.throttle(function() {throttledCount++}, 100)
+    while ((new Date().valueOf() - start) < 410) {
+      count++;
+      fn();
+    }
+    expect(count).toBeGreaterThan(throttledCount)
+    expect(throttledCount).toEqual(5)
+  })
+
+  it('should call one final time', function() {
+    runs(function() {
+      this.throttledCount = 0;
+      var that = this;
+      fn = Funk.throttle(function() {that.throttledCount++}, 100)
+      start = new Date().valueOf();
+      while ((new Date().valueOf() - start) < 50) {
+        fn();
+      }
+      expect(this.throttledCount).toEqual(1)
+    });
+    waits(150);
+    runs(function() {
+      expect(this.throttledCount).toEqual(2)
+    });
+    waits(100);
+    runs(function() {
+      expect(this.throttledCount).toEqual(2)
+    });
+  });
+
+  it('should call through with parameters', function(){
+    var a= 0, b=0;
+    fn= Funk.throttle(function(x,y) {a=x;b=y}, 0);
+    fn(1,2)
+    expect(a).toEqual(1)
+    expect(b).toEqual(2)
+  });
+});
+
+describe('beforeAndAfter', function() {
+
+  var beforeCount,
+      beforeFn = function(){beforeCount++},
+      afterCount,
+      afterFn = function() {afterCount++},
+      fn;
+
+  beforeEach(function () {
+    beforeCount = 0;
+    afterCount = 0;
+    fn = Funk.beforeAndAfter(beforeFn, afterFn, 50)
+  });
+
+  it("should call before once", function () {
+    runs(function() {
+      expect(beforeCount).toEqual(0);
+      fn();
+      expect(beforeCount).toEqual(1);
+    });
+    waits(100);
+    runs(function() {
+      expect(beforeCount).toEqual(1);
+    });
+  });
+  it("should call after once", function () {
+    runs(function() {
+      fn();
+      expect(afterCount).toEqual(0);
+    });
+    waits(100);
+    runs(function() {
+      expect(afterCount).toEqual(1);
+    });
+  });
+
+  it("should throttle calls before once", function () {
+    runs(function() {
+      expect(beforeCount).toEqual(0);
+      for (var i = 0; i < 1000; i++) fn();
+      expect(beforeCount).toEqual(1);
+      expect(afterCount).toEqual(0);
+    });
+    waits(100);
+    runs(function() {
+      expect(beforeCount).toEqual(1);
+      expect(afterCount).toEqual(1);
+    });
+  });
+
+  it("should start up again after pause", function () {
+    runs(function() {
+      expect(beforeCount).toEqual(0);
+      for (var i = 0; i < 1000; i++) fn();
+      expect(beforeCount).toEqual(1);
+      expect(afterCount).toEqual(0);
+    });
+    waits(100);
+    runs(function() {
+      expect(beforeCount).toEqual(1);
+      expect(afterCount).toEqual(1);
+      for (var i = 0; i < 1000; i++) fn();
+      expect(beforeCount).toEqual(2);
+      expect(afterCount).toEqual(1);
+    });
+    waits(100);
+    runs(function() {
+      expect(beforeCount).toEqual(2);
+      expect(afterCount).toEqual(2);
+    });
+  });
+
+});
+
 describe('fn shorteners',function() {
     it('should shorten',function() {
         expect(f('2+2')()).toEqual(4);
@@ -173,6 +290,6 @@ describe('fn shorteners',function() {
 });
 
 
-describe('currrying', function() {
+describe('currying', function() {
    it('should ')
 });
