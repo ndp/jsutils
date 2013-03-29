@@ -18,8 +18,8 @@
  See $.fn.fixie.defaults for other options.
  */
 
-(function () {
   // Simple throttle function-decorator.
+(function ($) {
   var throttle = function (fn, milliseconds) {
     var ctx = this,
         timeout = null,
@@ -119,4 +119,5 @@
   };
 
 })();
+})(jQuery);
 
