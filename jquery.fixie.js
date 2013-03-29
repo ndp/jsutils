@@ -43,6 +43,11 @@
     }
   };
 
+  /* Returns a fn that should be called repeatedly.
+   When it is first called, beforeFn is called, and after
+   a break of _milliseconds_, will call afterFn. Repeats
+   as needed.
+   */
   var beforeAndAfter = function (beforeFn, afterFn, milliseconds) {
     var ctx = this, timeout = null;
 
