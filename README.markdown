@@ -42,23 +42,7 @@ but generally all that is needed for most jobs.
 
 ### .fixie
 
-"Pin" the given element to the top of the page on vertical scroll.
-Also know as "conditional fixed placement".
-See http://www.gregjopa.com/2011/07/conditional-fixed-positioning-with-jquery/
-
-**Usage:**
-```
-  $('#menu').fixie({ topMargin: '20px' });
-```
-
-There are various strategies available:
-* `relative`: simply make the element positioned relative and
-  adjust position. Works with simple elements
-* `relativeWithHiding`: same as above, except fades out and shows
-  elements as they move
-* `fixed`: makes the element fixed positioned.  TODO: insert
-  placeholder element
-
+Moved into its own repo, github.com/ndp/fixie
 
 ## Jasmine Helpers
 
