@@ -8,12 +8,12 @@
  $('#menu').fixie({ topMargin: '20px' });
 
  There are various strategies available:
- * relative: simply make the element positioned relative and
+ * *relative*: simply make the element positioned relative and
    adjust position. Works with simple elements
- * relativeWithHiding: same as above, except fades out and shows
-   elements as they move
- * fixed: makes the element fixed positioned.  TODO: insert
-   placeholder element
+ * *relativeWithHiding*: same as *relative" above, except fades out
+   and shows elements as they move, smoothing the page
+ * fixed: makes the element fixed positioned once they are at the top
+   of the page.
 
  See $.fn.fixie.defaults for other options.
  */
@@ -67,62 +67,64 @@
   };
 
 
+
   $.fn.fixie = function (options) {
 
     var config = $.extend({}, $.fn.fixie.defaults, options);
 
-    var $target = $(this);
-    var margin = $target.position().top - (config.topMargin || 0);
+    return $(this).each(function () {
+      var $target = $(this);
+      var margin = $target.position().top - (config.topMargin || 0);
 
-    var strategies = {
-      relative: function () {
-        $target.css('position', 'relative');
-        var moveIt = function (e) {
-          var top = Math.max(0, window.scrollY - margin);
-          $target.css('top', top).toggleClass(config.pinnedClass, top > 0);
-        }
-        $(window).on('scroll', throttle(moveIt, config.throttle));
-      },
-      relativeWithHiding: function () {
-        $target.css('position', 'relative');
-        var hideIt = function (e) {
-          $target.stop(true, false).animate({'opacity': 0.01}, 0.05);
-        }
-        var moveIt = function (e) {
-          var top = Math.max(0, window.scrollY - margin);
-          $target.css('top', top).toggleClass(config.pinnedClass, top > 0);
-          $target.stop(true, false).animate({'opacity': 1.0}, 'fast', false, false);
-        }
-        $(window).on('scroll', beforeAndAfter(hideIt, moveIt, config.throttle));
-      },
-      fixed: function () {
-        var fixIt = function () {
-          if (window.scrollY > margin) {
-            $target.css({position: 'fixed', top: config.topMargin || 0}).
-                addClass(config.pinnedClass);
-          } else
-            $target.css({position: 'relative', top: 0}).
-                removeClass(config.pinnedClass);
-        }
-        $(window).on('scroll', throttle(fixIt, config.throttle));
-      }
-    }
+      var strategies = {
 
-    strategies[config.strategy]();
-    return this;
+        relative: function () {
+          $target.css('position', 'relative');
+          var moveIt = function () {
+            var top = Math.max(0, window.scrollY - margin);
+            $target.css('top', top).toggleClass(config.pinnedClass, top > 0);
+          };
+          $(window).on('scroll', throttle(moveIt, config.throttle));
+        },
+
+        relativeWithHiding: function () {
+          $target.css('position', 'relative');
+          var hideIt = function () {
+            $target.stop(true, false).animate({'opacity': 0.01}, 0.05);
+          };
+          var moveIt = function () {
+            var top = Math.max(0, window.scrollY - margin);
+            $target.css('top', top).toggleClass(config.pinnedClass, top > 0);
+            $target.stop(true, false).animate({'opacity': 1.0}, 'fast', false, false);
+          };
+          $(window).on('scroll', beforeAndAfter(hideIt, moveIt, config.throttle));
+        },
+
+        fixed: function () {
+          var fixIt = function () {
+            if (window.scrollY > (margin + config.extraScrollPadding)) {
+              $target.css({position: 'fixed', top: config.topMargin}).
+                  addClass(config.pinnedClass);
+            } else
+              $target.css({position: 'relative', top: 0}).
+                  removeClass(config.pinnedClass);
+          };
+          $(window).on('scroll', throttle(fixIt, config.throttle));
+        }
+      };
+
+      strategies[config.strategy]();
+    });
   };
-
 
   $.fn.fixie.defaults = {
-    strategy: 'relative',
-    topMargin: 0,
-      // how close to the top to pin it?
-    pinnedClass: '_pinnedToTop',
-      // any css class to add on when pinned
-    throttle: 30
-      // how often to adjust position of element
+    strategy: 'fixed',
+    extraScrollPadding: 0, // make the user scroll extra down the page before the element is fixed?
+    topMargin: 0, // how close to the top to pin it?
+    pinnedClass: '_pinnedToTop', // any css class to add on when pinned
+    throttle: 30                  // how often to adjust position of element
   };
 
-})();
+
 })(jQuery);
 
